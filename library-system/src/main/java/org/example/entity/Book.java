@@ -25,10 +25,8 @@ public class Book {
     @Column(name = "description")
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id", referencedColumnName = "id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Category category;
+    @Column(name = "category")
+    private String category;
 
     @Column(name = "copies")
     private int copies;
@@ -42,7 +40,7 @@ public class Book {
     public Book() {
     }
 
-    public Book(long id, String title, String author, String description, Category category, int copies, String copiesAvailable, String image) {
+    public Book(long id, String title, String author, String description, String category, int copies, String copiesAvailable, String image) {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -85,11 +83,11 @@ public class Book {
         this.description = description;
     }
 
-    public Category getCategory() {
+    public String getCategory() {
         return category;
     }
 
-    public void setCategory(Category category) {
+    public void setCategory(String category) {
         this.category = category;
     }
 
@@ -122,15 +120,14 @@ public class Book {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Book book = (Book) o;
-        return id == book.id && copies == book.copies && title.equals(book.title) && Objects.equals(author, book.author)
-                && Objects.equals(description, book.description) && Objects.equals(category, book.category)
-                && Objects.equals(copiesAvailable, book.copiesAvailable) && Objects.equals(image, book.image);
+        return id == book.id && copies == book.copies && title.equals(book.title) && author.equals(book.author) && description.equals(book.description) && category.equals(book.category) && copiesAvailable.equals(book.copiesAvailable) && image.equals(book.image);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, title, author, description, category, copies, copiesAvailable, image);
     }
+
 
     @Override
     public String toString() {
