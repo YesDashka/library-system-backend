@@ -3,11 +3,13 @@ package org.example.dto;
 import jakarta.persistence.Column;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.Builder;
 import org.example.entity.Book;
 import org.example.entity.Category;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+@Builder
 public class BookDto {
 
     private String title;
@@ -18,14 +20,14 @@ public class BookDto {
 
     private String categoryName;
 
-    private String copiesAvailable;
+    private int copiesAvailable;
 
     private String image;
 
     public BookDto() {
     }
 
-    public BookDto(String title, String author, String description, String categoryName, String copiesAvailable, String image) {
+    public BookDto(String title, String author, String description, String categoryName, int copiesAvailable, String image) {
         this.title = title;
         this.author = author;
         this.description = description;
@@ -66,11 +68,11 @@ public class BookDto {
         this.categoryName = categoryName;
     }
 
-    public String getCopiesAvailable() {
+    public int getCopiesAvailable() {
         return copiesAvailable;
     }
 
-    public void setCopiesAvailable(String copiesAvailable) {
+    public void setCopiesAvailable(int copiesAvailable) {
         this.copiesAvailable = copiesAvailable;
     }
 
@@ -86,9 +88,20 @@ public class BookDto {
         return Book.builder().
                 title(bookDto.title)
                 .author(bookDto.author)
-                .category(Category.builder().name(bookDto.categoryName).build())
+                .description(bookDto.description)
+                .category(bookDto.categoryName)
                 .copiesAvailable(bookDto.copiesAvailable)
                 .image(bookDto.image)
+                .build();
+    }
+    public static BookDto convert(Book book) {
+        return BookDto.builder()
+                .title(book.getTitle())
+                .author(book.getAuthor())
+                .description(book.getDescription())
+                .categoryName(book.getCategory())
+                .copiesAvailable(book.getCopiesAvailable())
+                .image(book.getImage())
                 .build();
     }
 

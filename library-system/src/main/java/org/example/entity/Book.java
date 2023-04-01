@@ -5,6 +5,7 @@ import lombok.Builder;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -25,14 +26,15 @@ public class Book {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "category")
-    private String category;
+    @Column(name = "categories")
+    @ElementCollection
+    private List<String> categories;
 
     @Column(name = "copies")
     private int copies;
 
     @Column(name = "copies_available")
-    private String copiesAvailable;
+    private int copiesAvailable;
 
     @Column(name = "image")
     private String image;
@@ -40,12 +42,12 @@ public class Book {
     public Book() {
     }
 
-    public Book(long id, String title, String author, String description, String category, int copies, String copiesAvailable, String image) {
+    public Book(long id, String title, String author, String description, List<String> categories, int copies, int copiesAvailable, String image) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.description = description;
-        this.category = category;
+        this.categories = categories;
         this.copies = copies;
         this.copiesAvailable = copiesAvailable;
         this.image = image;
@@ -83,12 +85,16 @@ public class Book {
         this.description = description;
     }
 
-    public String getCategory() {
-        return category;
+    public List<String> getCategories() {
+        return categories;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCategories(List<String> categories) {
+        this.categories = categories;
+    }
+
+    public void setCategories(List<String> categories) {
+        this.categories = categories;
     }
 
     public int getCopies() {
@@ -99,11 +105,11 @@ public class Book {
         this.copies = copies;
     }
 
-    public String getCopiesAvailable() {
+    public int getCopiesAvailable() {
         return copiesAvailable;
     }
 
-    public void setCopiesAvailable(String copiesAvailable) {
+    public void setCopiesAvailable(int copiesAvailable) {
         this.copiesAvailable = copiesAvailable;
     }
 
@@ -115,19 +121,19 @@ public class Book {
         this.image = image;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Book book = (Book) o;
-        return id == book.id && copies == book.copies && title.equals(book.title) && author.equals(book.author) && description.equals(book.description) && category.equals(book.category) && copiesAvailable.equals(book.copiesAvailable) && image.equals(book.image);
+        return id == book.id && copies == book.copies && copiesAvailable == book.copiesAvailable && Objects.equals(title, book.title) && Objects.equals(author, book.author) && Objects.equals(description, book.description) && Objects.equals(categories, book.categories) && Objects.equals(image, book.image);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, author, description, category, copies, copiesAvailable, image);
+        return Objects.hash(id, title, author, description, categories, copies, copiesAvailable, image);
     }
-
 
     @Override
     public String toString() {
@@ -136,9 +142,9 @@ public class Book {
                 ", title='" + title + '\'' +
                 ", author='" + author + '\'' +
                 ", description='" + description + '\'' +
-                ", category=" + category +
+                ", categories=" + categories +
                 ", copies=" + copies +
-                ", copiesAvailable='" + copiesAvailable + '\'' +
+                ", copiesAvailable=" + copiesAvailable +
                 ", image='" + image + '\'' +
                 '}';
     }

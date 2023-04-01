@@ -26,7 +26,6 @@ public class BookServiceImpl implements BookService{
     public Book updateBook(long bookId, Book bookDetails) {
         Book updatedBook = bookRepository.findById(bookId).orElseThrow(() -> new RuntimeException());
         updatedBook.setAuthor(bookDetails.getAuthor());
-        updatedBook.setAuthor(bookDetails.getAuthor());
         updatedBook.setCategory(bookDetails.getCategory());
         updatedBook.setDescription(bookDetails.getDescription());
         updatedBook.setCopies(bookDetails.getCopies());

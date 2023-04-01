@@ -9,9 +9,6 @@
         <module name="budget-managent-system" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="budget-managent-system" target="11" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
