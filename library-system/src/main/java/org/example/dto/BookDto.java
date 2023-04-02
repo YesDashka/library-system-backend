@@ -1,37 +1,28 @@
 package org.example.dto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.Builder;
 import org.example.entity.Book;
-import org.example.entity.Category;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+
+import java.util.Set;
 
 @Builder
 public class BookDto {
 
     private String title;
-
     private String author;
-
     private String description;
-
-    private String categoryName;
-
+    private Set<String> categories;
     private int copiesAvailable;
-
     private String image;
 
     public BookDto() {
     }
 
-    public BookDto(String title, String author, String description, String categoryName, int copiesAvailable, String image) {
+    public BookDto(String title, String author, String description, Set<String> categories, int copiesAvailable, String image) {
         this.title = title;
         this.author = author;
         this.description = description;
-        this.categoryName = categoryName;
+        this.categories = categories;
         this.copiesAvailable = copiesAvailable;
         this.image = image;
     }
@@ -60,12 +51,12 @@ public class BookDto {
         this.description = description;
     }
 
-    public String getCategoryName() {
-        return categoryName;
+    public Set<String> getCategories() {
+        return categories;
     }
 
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
+    public void setCategories(Set<String> categories) {
+        this.categories = categories;
     }
 
     public int getCopiesAvailable() {
@@ -89,7 +80,7 @@ public class BookDto {
                 title(bookDto.title)
                 .author(bookDto.author)
                 .description(bookDto.description)
-                .category(bookDto.categoryName)
+                .categories(bookDto.categories)
                 .copiesAvailable(bookDto.copiesAvailable)
                 .image(bookDto.image)
                 .build();
@@ -99,7 +90,7 @@ public class BookDto {
                 .title(book.getTitle())
                 .author(book.getAuthor())
                 .description(book.getDescription())
-                .categoryName(book.getCategory())
+                .categories(book.getCategories())
                 .copiesAvailable(book.getCopiesAvailable())
                 .image(book.getImage())
                 .build();
@@ -111,7 +102,7 @@ public class BookDto {
                 "title='" + title + '\'' +
                 ", author='" + author + '\'' +
                 ", description='" + description + '\'' +
-                ", categoryName=" + categoryName +
+                ", categoryName=" + categories +
                 ", copiesAvailable='" + copiesAvailable + '\'' +
                 ", image='" + image + '\'' +
                 '}';

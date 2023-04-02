@@ -1,9 +1,7 @@
 package org.example;
 
 import org.example.entity.Book;
-import org.example.entity.Category;
 import org.example.repository.BookRepository;
-import org.example.repository.CategoryRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class LibrarySystemApplication implements CommandLineRunner {
 
-	BookRepository bookRepository;
+	private final BookRepository bookRepository;
 
 	public LibrarySystemApplication(BookRepository bookRepository) {
 		this.bookRepository = bookRepository;
@@ -22,13 +20,13 @@ public class LibrarySystemApplication implements CommandLineRunner {
 	}
 
 	@Override
-	public void run(String... args) throws Exception {
+	public void run(String... args) {
 
 		Book book1  = new Book();
 		book1.setTitle("Title1");
 		book1.setAuthor("Author1");
 		book1.setDescription("Description1");
-		book1.setCategory("Category1");
+		book1.setCategories("Category1");
 		book1.setCopies(150);
 		book1.setCopiesAvailable(50);
 		bookRepository.save(book1);
@@ -38,7 +36,7 @@ public class LibrarySystemApplication implements CommandLineRunner {
 		book2.setTitle("Title2");
 		book2.setAuthor("Author2");
 		book2.setDescription("Description2");
-		book2.setCategory("Category2");
+		book2.setCategories("Category2,Category3");
 		book2.setCopies(170);
 		book2.setCopiesAvailable(70);
 		bookRepository.save(book2);
@@ -47,9 +45,10 @@ public class LibrarySystemApplication implements CommandLineRunner {
 		book3.setTitle("Title3");
 		book3.setAuthor("Author3");
 		book3.setDescription("Description3");
-		book3.setCategory("Category3");
+		book3.setCategories("Category3");
 		book3.setCopies(160);
 		book3.setCopiesAvailable(60);
+		System.out.println(book3);
 		bookRepository.save(book3);
 
 //		Category category1 = new Category();

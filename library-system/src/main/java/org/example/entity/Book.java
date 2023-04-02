@@ -1,17 +1,26 @@
 package org.example.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Builder;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
-import java.util.List;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "book")
 @Builder
 public class Book {
+
+    private static final String CATEGORIES_SEPARATOR = ",";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -28,7 +37,7 @@ public class Book {
 
     @Column(name = "categories")
     @ElementCollection
-    private List<String> categories;
+    private Set<String> categories;
 
     @Column(name = "copies")
     private int copies;
@@ -42,7 +51,7 @@ public class Book {
     public Book() {
     }
 
-    public Book(long id, String title, String author, String description, List<String> categories, int copies, int copiesAvailable, String image) {
+    public Book(long id, String title, String author, String description, Set<String> categories, int copies, int copiesAvailable, String image) {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -85,16 +94,15 @@ public class Book {
         this.description = description;
     }
 
-    public List<String> getCategories() {
+    public Set<String> getCategories() {
         return categories;
     }
 
-    public void setCategories(List<String> categories) {
+    public void setCategories(Set<String> categories) {
         this.categories = categories;
     }
-
-    public void setCategories(List<String> categories) {
-        this.categories = categories;
+    public void setCategories(String categories) {
+        this.categories = new HashSet<>(Arrays.asList(categories.split(CATEGORIES_SEPARATOR)));
     }
 
     public int getCopies() {

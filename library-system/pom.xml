@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>budget-managent-system</artifactId>
+	<artifactId>library-system</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>budget-managent-system</name>
-	<description>budget-managent-system</description>
+	<name>library-system</name>
+	<description>library-system</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>
@@ -70,7 +70,15 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-		</plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>15</source>
+                    <target>15</target>
+                </configuration>
+            </plugin>
+        </plugins>
 	</build>
 
 </project>

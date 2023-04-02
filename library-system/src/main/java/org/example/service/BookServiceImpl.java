@@ -2,6 +2,9 @@ package org.example.service;
 
 import org.example.dto.BookDto;
 import org.example.entity.Book;
+import org.example.exception.BookNotAvailableException;
+import org.example.exception.BookNotFoundException;
+import org.example.exception.NoSuchCopiesAvailableException;
 import org.example.repository.BookRepository;
 import org.springframework.stereotype.Service;
 
@@ -23,12 +26,12 @@ public class BookServiceImpl implements BookService{
     }
 
     @Override
-    public Book updateBook(long bookId, Book bookDetails) {
+    public Book updateBook(long bookId, Book book) {
         Book updatedBook = bookRepository.findById(bookId).orElseThrow(() -> new RuntimeException());
-        updatedBook.setAuthor(bookDetails.getAuthor());
-        updatedBook.setCategory(bookDetails.getCategory());
-        updatedBook.setDescription(bookDetails.getDescription());
-        updatedBook.setCopies(bookDetails.getCopies());
+        updatedBook.setAuthor(book.getAuthor());
+        updatedBook.setCategories(book.getCategories());
+        updatedBook.setDescription(book.getDescription());
+        updatedBook.setCopies(book.getCopies());
         bookRepository.save(updatedBook);
         return updatedBook;
     }
@@ -48,4 +51,5 @@ public class BookServiceImpl implements BookService{
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
     }
+
 }
