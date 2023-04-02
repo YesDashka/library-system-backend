@@ -10,9 +10,11 @@ import org.example.exception.ReservationNotFoundException;
 import org.example.repository.BookRepository;
 import org.example.repository.ReserveBookRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
-public class BookReservationServiceImpl implements BookReservationService{
+public class BookReservationServiceImpl implements BookReservationService {
 
     private final BookRepository bookRepository;
     private final ReserveBookRepository reserveBookRepository;
@@ -38,6 +40,13 @@ public class BookReservationServiceImpl implements BookReservationService{
         return copiesLeft;
     }
 
+    @Transactional
+    public void expireReservation(Reservation reservation, Book book) {
+        Reservation expiredReservation = Reservation.expiredReservation(reservation);
+        book.setCopiesAvailable(book.getCopiesAvailable() + reservation.getCount());
+        reserveBookRepository.save(expiredReservation);
+        bookRepository.save(book);
+    }
 
     @Override
     public int cancelReservation(long reservationId) throws ReservationNotFoundException {

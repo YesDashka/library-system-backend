@@ -43,6 +43,14 @@ public class Reservation {
         this.startDate = startDate;
         this.endDate = endDate;
     }
+    private Reservation(long id, long bookId, int count, ReservationStatus status, LocalDate startDate, LocalDate endDate) {
+        this.id = id;
+        this.bookId = bookId;
+        this.count = count;
+        this.status = status;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
 
     public static Reservation newReservation(long bookId, int count) {
         if (bookId < 0L) {
@@ -61,7 +69,16 @@ public class Reservation {
         );
     }
 
-
+    public static Reservation expiredReservation(Reservation reservation) {
+        return new Reservation(
+                reservation.id,
+                reservation.bookId,
+                reservation.count,
+                ReservationStatus.EXPIRED,
+                reservation.startDate,
+                reservation.endDate
+        );
+    }
 
     public long getBookId() {
         return bookId;
@@ -111,4 +128,15 @@ public class Reservation {
         this.status = status;
     }
 
+    @Override
+    public String toString() {
+        return "Reservation{" +
+                "id=" + id +
+                ", bookId=" + bookId +
+                ", count=" + count +
+                ", status=" + status +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                '}';
+    }
 }

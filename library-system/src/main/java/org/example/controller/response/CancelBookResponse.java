@@ -1,5 +1,5 @@
 package org.example.controller.response;
-public class CancelBookResponse extends BookResponse{
+public class CancelBookResponse extends BookResponse {
     public CancelBookResponse() {
     }
 

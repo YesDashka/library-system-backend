@@ -13,33 +13,34 @@ public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     private long id;
 
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "author")
+    @Column(name = "author", nullable = false)
     private String author;
 
     @Column(name = "description")
     private String description;
 
-    @Column(name = "categories")
+    @Column(name = "categories", nullable = false)
     @ElementCollection
     private Set<String> categories;
 
     @Column(name = "copies")
     private int copies;
 
-    @Column(name = "copies_available")
+    @Column(name = "copies_available", nullable = false)
     private int copiesAvailable;
 
-    @Column(name = "image")
+    @Column(name = "image", nullable = false)
     private String image;
 
-    @Column(name = "price")
+    @Column(name = "price", nullable = false)
     private double price;
+
     public Book() {
     }
 
@@ -56,6 +57,7 @@ public class Book {
         this.image = image;
         this.price = price;
     }
+
 
     public long getId() {
         return id;

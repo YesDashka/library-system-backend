@@ -6,11 +6,16 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.List;
+
 public interface BookRepository extends JpaRepository<Book, Long> {
 
     @Modifying
     @Transactional
     @Query("update Book set copiesAvailable = ?2 where id = ?1")
     void updateCopiesAvailable(long id, int copiesAvailable);
+
+    List<Book> findAllByIdIn(Collection<Long> ids);
 
 }
