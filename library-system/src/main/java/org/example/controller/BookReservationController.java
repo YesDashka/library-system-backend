@@ -1,6 +1,5 @@
 package org.example.controller;
 
-import org.example.controller.response.BookResponse;
 import org.example.controller.response.CancelBookResponse;
 import org.example.controller.response.ReserveBookResponse;
 import org.example.exception.BookNotAvailableException;
@@ -27,13 +26,13 @@ public class BookReservationController {
     }
 
     @PutMapping("/{bookId}/reserve")
-    public ResponseEntity<BookResponse> reserveBook(
+    public ResponseEntity<ReserveBookResponse> reserveBook(
             @PathVariable("bookId") long id,
             @RequestParam(value = "count", defaultValue = "1") int count
     ) {
         try {
             int copiesLeft = reservationService.reserve(id, count);
-            BookResponse reserveBookResponse = new ReserveBookResponse(copiesLeft, "Successfully reserved the book by id %d".formatted(id));
+            ReserveBookResponse reserveBookResponse = new ReserveBookResponse(copiesLeft, "Successfully reserved the book by id %d".formatted(id));
             return new ResponseEntity<>(reserveBookResponse, HttpStatus.OK);
         } catch (BookNotAvailableException | BookNotFoundException e) {
             ReserveBookResponse response = new ReserveBookResponse(0, e.getMessage());
@@ -44,16 +43,16 @@ public class BookReservationController {
         }
     }
     @PutMapping("/{reservationId}/cancel")
-    public ResponseEntity<BookResponse> cancelReservation(
+    public ResponseEntity<CancelBookResponse> cancelReservation(
             @PathVariable("reservationId") long reservationId
     ) {
         try {
             int copiesLeft = reservationService.cancelReservation(reservationId);
-            BookResponse cancelBookResponse = new CancelBookResponse(copiesLeft,
+            CancelBookResponse cancelBookResponse = new CancelBookResponse(copiesLeft,
                     "Successfully cancel the reservation by id %d".formatted(reservationId));
             return new ResponseEntity<>(cancelBookResponse, HttpStatus.OK);
-        } catch (ReservationNotFoundException e) {
-            BookResponse response = new CancelBookResponse(e.getMessage());
+        } catch (ReservationNotFoundException | BookNotAvailableException e) {
+            CancelBookResponse response = new CancelBookResponse(e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

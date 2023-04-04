@@ -79,6 +79,16 @@ public class Reservation {
                 reservation.endDate
         );
     }
+    public static Reservation cancelledReservation(Reservation reservation) {
+        return new Reservation(
+                reservation.id,
+                reservation.bookId,
+                reservation.count,
+                ReservationStatus.CANCELLED,
+                reservation.startDate,
+                reservation.endDate
+        );
+    }
 
     public long getBookId() {
         return bookId;

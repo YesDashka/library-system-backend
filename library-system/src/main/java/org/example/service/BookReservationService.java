@@ -9,9 +9,9 @@ import org.example.exception.ReservationNotFoundException;
 
 public interface BookReservationService {
 
-    int reserve(long id, int count) throws BookNotAvailableException, NoSuchCopiesAvailableException, BookNotFoundException;
+    int reserve(long bookId, int count) throws BookNotAvailableException, NoSuchCopiesAvailableException, BookNotFoundException;
 
-    int cancelReservation(long reservationId) throws ReservationNotFoundException;
+    int cancelReservation(long reservationId) throws ReservationNotFoundException, BookNotAvailableException;
 
-    void expireReservation(Reservation reservation, Book book);
+    int expireReservation(Reservation reservation, Book book);
 }

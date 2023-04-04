@@ -2,6 +2,7 @@ package org.example.entity;
 
 import jakarta.persistence.*;
 import lombok.Builder;
+import org.example.exception.NoSuchCopiesAvailableException;
 
 import java.util.*;
 
@@ -9,6 +10,7 @@ import java.util.*;
 @Table(name = "book")
 @Builder
 public class Book {
+
     private static final String CATEGORIES_SEPARATOR = ",";
 
     @Id
@@ -35,7 +37,7 @@ public class Book {
     @Column(name = "copies_available", nullable = false)
     private int copiesAvailable;
 
-    @Column(name = "image", nullable = false)
+    @Column(name = "image")
     private String image;
 
     @Column(name = "price", nullable = false)
@@ -57,7 +59,6 @@ public class Book {
         this.image = image;
         this.price = price;
     }
-
 
     public long getId() {
         return id;

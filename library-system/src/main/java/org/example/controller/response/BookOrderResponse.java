@@ -1,13 +1,13 @@
 package org.example.controller.response;
 
-public class BookResponse {
+public class BookOrderResponse {
     protected int copiesLeft;
     protected String message;
 
-    public BookResponse() {
+    public BookOrderResponse() {
     }
 
-    public BookResponse(int copiesLeft, String message) {
+    public BookOrderResponse(int copiesLeft, String message) {
         this.copiesLeft = copiesLeft;
         this.message = message;
     }
