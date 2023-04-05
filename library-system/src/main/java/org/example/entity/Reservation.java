@@ -1,13 +1,6 @@
 package org.example.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
@@ -75,7 +68,7 @@ public class Reservation {
         return new Reservation(
                 bookId,
                 count,
-                ReservationStatus.RESERVED,
+                ReservationStatus.NOT_RESERVED,
                 now,
                 now.plusDays(RESERVATION_DAYS_PERIOD)
         );
@@ -102,6 +95,40 @@ public class Reservation {
                 reservation.endDate
         );
     }
+
+    public static Reservation committedReservation(Reservation reservation) {
+        return new Reservation(
+                reservation.id,
+                reservation.bookId,
+                reservation.count,
+                ReservationStatus.COMMITTED,
+                reservation.startDate,
+                reservation.endDate
+        );
+    }
+
+    public static Reservation reserved(Reservation reservation) {
+        return new Reservation(
+                reservation.id,
+                reservation.bookId,
+                reservation.count,
+                ReservationStatus.RESERVED,
+                reservation.startDate,
+                reservation.endDate
+        );
+    }
+
+    public static Reservation reservationFactory(Reservation reservation, ReservationStatus status) {
+        return switch (status) {
+            case RESERVED -> reserved(reservation);
+            case EXPIRED -> expiredReservation(reservation);
+            case CANCELLED -> cancelledReservation(reservation);
+            case COMMITTED -> committedReservation(reservation);
+            default -> throw new IllegalArgumentException();
+        };
+    }
+
+
 
     public boolean belongsTo(Book book) {
         return id == book.getId();

@@ -1,5 +1,5 @@
 package org.example.entity;
 
 public enum ReservationStatus {
-    RESERVED, EXPIRED, CANCELLED
+    NOT_RESERVED, RESERVED, EXPIRED, CANCELLED, COMMITTED
 }

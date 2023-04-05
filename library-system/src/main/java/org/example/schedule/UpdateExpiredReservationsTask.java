@@ -3,6 +3,7 @@ package org.example.schedule;
 import org.example.entity.Book;
 import org.example.entity.Reservation;
 import org.example.entity.ReservationStatus;
+import org.example.exception.BookNotFoundException;
 import org.example.repository.BookRepository;
 import org.example.repository.ReserveBookRepository;
 import org.example.service.BookReservationService;
@@ -39,28 +40,21 @@ public class UpdateExpiredReservationsTask {
         List<Reservation> reservations = reservationRepository
                 .findAllByStatusAndEndDateBefore(ReservationStatus.RESERVED, LocalDate.now())
                 .stream()
-                .collect(Collectors.toList());
+                .toList();
         if (reservations.isEmpty()) {
             return;
         }
         logger.info("Fetch reservations to expire: count={}", reservations.size());
 
-        List<Book> booksToUpdate = findBooksByReservations(reservations);
-        logger.info("Fetch books for copiesAvailable update: count={}", booksToUpdate.size());
-
         List<Reservation> failedReservations = new ArrayList<>();
-        reservations.forEach(reservation ->
-                booksToUpdate.stream()
-                        .filter(reservation::belongsTo)
-                        .forEach(book -> {
-                            try {
-                                reservationService.expireReservation(reservation, book);
-                            } catch (RuntimeException e) {
-                                logger.error("Failed to expire reservation with id {}: {}", reservation.getId(), e.getMessage());
-                                failedReservations.add(reservation);
-                            }
-                        })
-        );
+        reservations.forEach(reservation ->{
+            try {
+                reservationService.expireReservation(reservation);
+            } catch (RuntimeException | BookNotFoundException e) {
+                logger.error("Failed to expire reservation with id {}: {}", reservation.getId(), e.getMessage());
+                failedReservations.add(reservation);
+            }
+        });
 
         if (!failedReservations.isEmpty()) {
             logger.warn("Failed to expire {} reservations", failedReservations.size());
@@ -68,13 +62,5 @@ public class UpdateExpiredReservationsTask {
         }
         logger.info("Successfully expired reservations reservations: count={}", reservations.size());
     }
-
-    private List<Book> findBooksByReservations(List<Reservation> reservations) {
-        List<Long> bookIdsToUpdate = reservations.stream()
-                .map(Reservation::getBookId)
-                .collect(Collectors.toList());
-        return bookRepository.findAllByIdIn(bookIdsToUpdate);
-    }
-
 
 }

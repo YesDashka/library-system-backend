@@ -1,9 +1,14 @@
 package org.example.service;
 
+import lombok.SneakyThrows;
+import org.example.exception.BookNotFoundException;
+import org.example.exception.NoSuchCopiesAvailableException;
+import org.example.exception.ReservationNotFoundException;
+
 public interface BookOrderService {
 
-    int buy(long bookId, int count);
+    int order(long bookId, int count) throws BookNotFoundException, NoSuchCopiesAvailableException;
 
-    int cancelPurchase(long purchaseId);
-
+    @SneakyThrows(value = NoSuchCopiesAvailableException.class)
+    int order(long reservationId) throws ReservationNotFoundException, BookNotFoundException;
 }

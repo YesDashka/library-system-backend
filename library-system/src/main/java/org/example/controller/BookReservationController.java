@@ -51,7 +51,7 @@ public class BookReservationController {
             CancelBookResponse cancelBookResponse = new CancelBookResponse(copiesLeft,
                     "Successfully cancel the reservation by id %d".formatted(reservationId));
             return new ResponseEntity<>(cancelBookResponse, HttpStatus.OK);
-        } catch (ReservationNotFoundException | BookNotAvailableException e) {
+        } catch (ReservationNotFoundException | BookNotAvailableException | BookNotFoundException e) {
             CancelBookResponse response = new CancelBookResponse(e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }

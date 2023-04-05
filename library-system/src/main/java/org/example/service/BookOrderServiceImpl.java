@@ -1,56 +1,54 @@
 package org.example.service;
 
 import lombok.SneakyThrows;
+import org.example.entity.BookOrder;
 import org.example.entity.Reservation;
 import org.example.entity.ReservationStatus;
 import org.example.exception.BookNotFoundException;
 import org.example.exception.NoSuchCopiesAvailableException;
 import org.example.exception.ReservationNotFoundException;
+import org.example.repository.BookOrderRepository;
 import org.example.repository.BookRepository;
 import org.example.repository.ReserveBookRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 
 @Service
-public class BookReservationServiceImpl implements BookReservationService {
+public class BookOrderServiceImpl implements BookOrderService{
 
     private final BookRepository bookRepository;
+    private final BookOrderRepository bookOrderRepository;
     private final ReserveBookRepository reserveBookRepository;
     private final ReservationEntryService reservationEntryService;
 
-    public BookReservationServiceImpl(
+    public BookOrderServiceImpl(
             BookRepository bookRepository,
+            BookOrderRepository bookOrderRepository,
             ReserveBookRepository reserveBookRepository,
             ReservationEntryService reservationEntryService
     ) {
         this.bookRepository = bookRepository;
+        this.bookOrderRepository = bookOrderRepository;
         this.reserveBookRepository = reserveBookRepository;
         this.reservationEntryService = reservationEntryService;
     }
 
-    @Transactional
     @Override
-    public int reserve(long bookId, int count) throws NoSuchCopiesAvailableException, BookNotFoundException {
+    public int order(long bookId, int count) throws BookNotFoundException, NoSuchCopiesAvailableException {
         Reservation reservation = reserveBookRepository.save(Reservation.newReservation(bookId, count));
-        return reservationEntryService.updateReservation(reservation, ReservationStatus.RESERVED);
+        BookOrder bookOrder = BookOrder.newOrder(reservation.getId());
+        bookOrderRepository.save(bookOrder);
+
+        return reservationEntryService.updateReservation(reservation, ReservationStatus.COMMITTED);
     }
 
     @SneakyThrows(value = NoSuchCopiesAvailableException.class)
-    @Transactional
     @Override
-    public int expireReservation(Reservation reservation) throws BookNotFoundException {
-        return reservationEntryService.updateReservation(reservation, ReservationStatus.EXPIRED);
+    public int order(long reservationId) throws ReservationNotFoundException, BookNotFoundException {
+        Reservation reservation = reserveBookRepository.findById(reservationId).orElseThrow(ReservationNotFoundException::new);
+        BookOrder newOrder = BookOrder.newOrder(reservation.getId());
+        bookOrderRepository.save(newOrder);
+        reservationEntryService.updateReservation(reservation, ReservationStatus.COMMITTED);
+        return 0;
     }
 
-    @SneakyThrows(value = NoSuchCopiesAvailableException.class)
-    @Transactional
-    @Override
-    public int cancelReservation(long reservationId) throws ReservationNotFoundException, BookNotFoundException {
-        final Reservation reservation = reserveBookRepository
-                .findById(reservationId)
-                .orElseThrow(ReservationNotFoundException::new);
-        return reservationEntryService.updateReservation(reservation, ReservationStatus.CANCELLED);
-    }
 }
-

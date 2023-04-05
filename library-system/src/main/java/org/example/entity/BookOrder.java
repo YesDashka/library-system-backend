@@ -1,6 +1,7 @@
 package org.example.entity;
 
 import jakarta.persistence.*;
+import org.example.exception.ReservationNotAvailableException;
 
 import java.time.LocalDate;
 
@@ -12,50 +13,33 @@ public class BookOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private final long id;
-
-    @Column(name = "book_id")
-    private final long bookId;
-
-    @Column(name = "count")
-    private final int count;
-
-    @Column(name = "is_reserved")
-    private final boolean isReserved;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private final BookOrderStatus status;
-
+    @Column(name = "reservation_id")
+    private final long reservationId;
     @Column(name = "date")
     private final LocalDate date;
 
-    public BookOrder() {
+    protected BookOrder() {
+        this.reservationId = 0L;
         this.id = 0;
-        this.bookId = 0;
-        this.count = 0;
-        this.isReserved = false;
-        this.status = null;
         this.date = null;
+    }
+
+    public BookOrder(long reservationId) {
+        this.id = 0L;
+        this.reservationId = reservationId;
+        this.date = LocalDate.now();
+    }
+
+    public static BookOrder newOrder(long reservationId) {
+        return new BookOrder(reservationId);
     }
 
     public long getId() {
         return id;
     }
 
-    public long getBookId() {
-        return bookId;
-    }
-
-    public int getCount() {
-        return count;
-    }
-
-    public boolean isReserved() {
-        return isReserved;
-    }
-
-    public BookOrderStatus getStatus() {
-        return status;
+    public long getReservationId() {
+        return reservationId;
     }
 
     public LocalDate getDate() {
@@ -66,10 +50,7 @@ public class BookOrder {
     public String toString() {
         return "BookOrder{" +
                 "id=" + id +
-                ", bookId=" + bookId +
-                ", count=" + count +
-                ", isReserved=" + isReserved +
-                ", status=" + status +
+                ", reservationId=" + reservationId +
                 ", date=" + date +
                 '}';
     }
