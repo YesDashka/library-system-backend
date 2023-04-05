@@ -20,23 +20,35 @@ public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    private final long id;
 
-    private long bookId;
-    private int count;
+    @Column(name = "book_id")
+    private final long bookId;
+
+    @Column(name = "count")
+    private final int count;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private ReservationStatus status;
+    private final ReservationStatus status;
+
     @Column(name = "start_date")
-    private LocalDate startDate;
+    private final LocalDate startDate;
+
     @Column(name = "end_date")
-    private LocalDate endDate;
+    private final LocalDate endDate;
 
     protected Reservation() {
+        this.id = 0;
+        this.bookId = 0;
+        this.count = 0;
+        this.status = null;
+        this.startDate = null;
+        this.endDate = null;
     }
 
     private Reservation(long bookId, int count, ReservationStatus status, LocalDate startDate, LocalDate endDate) {
+        this.id = 0L;
         this.bookId = bookId;
         this.count = count;
         this.status = status;
@@ -79,6 +91,7 @@ public class Reservation {
                 reservation.endDate
         );
     }
+
     public static Reservation cancelledReservation(Reservation reservation) {
         return new Reservation(
                 reservation.id,
@@ -90,52 +103,32 @@ public class Reservation {
         );
     }
 
-    public long getBookId() {
-        return bookId;
+    public boolean belongsTo(Book book) {
+        return id == book.getId();
     }
 
-    private void setBookId(long bookId) {
-        this.bookId = bookId;
+    public long getBookId() {
+        return bookId;
     }
 
     public int getCount() {
         return count;
     }
 
-    private void setCount(int count) {
-        this.count = count;
-    }
-
-    public LocalDate getStartDate() {
+    private LocalDate getStartDate() {
         return startDate;
     }
 
-    private void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
-    public LocalDate getEndDate() {
+    private LocalDate getEndDate() {
         return endDate;
-    }
-
-    private void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
     }
 
     public long getId() {
         return id;
     }
 
-    private void setId(long id) {
-        this.id = id;
-    }
-
     public ReservationStatus getStatus() {
         return status;
-    }
-
-    private void setStatus(ReservationStatus status) {
-        this.status = status;
     }
 
     @Override

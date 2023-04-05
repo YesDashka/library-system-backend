@@ -19,12 +19,17 @@ public class BookReservationServiceImpl implements BookReservationService {
     private final ReserveBookRepository reserveBookRepository;
     private final ReservationEntryService reservationEntryService;
 
-    public BookReservationServiceImpl(BookRepository bookRepository, ReserveBookRepository reserveBookRepository, ReservationEntryService reservationEntryService) {
+    public BookReservationServiceImpl(
+            BookRepository bookRepository,
+            ReserveBookRepository reserveBookRepository,
+            ReservationEntryService reservationEntryService
+    ) {
         this.bookRepository = bookRepository;
         this.reserveBookRepository = reserveBookRepository;
         this.reservationEntryService = reservationEntryService;
     }
 
+    @Transactional
     @Override
     public int reserve(long bookId, int count) throws NoSuchCopiesAvailableException, BookNotFoundException {
         Book book = bookRepository
@@ -36,15 +41,17 @@ public class BookReservationServiceImpl implements BookReservationService {
 
     @SneakyThrows(value = NoSuchCopiesAvailableException.class)
     @Transactional
+    @Override
     public int expireReservation(Reservation reservation, Book book) {
         Reservation expiredReservation = reserveBookRepository.save(Reservation.expiredReservation(reservation));
         return reservationEntryService.commitReservation(book, expiredReservation);
     }
 
     @SneakyThrows(value = NoSuchCopiesAvailableException.class)
+    @Transactional
     @Override
     public int cancelReservation(long reservationId) throws ReservationNotFoundException {
-        Reservation reservation = reserveBookRepository
+        final Reservation reservation = reserveBookRepository
                 .findById(reservationId)
                 .orElseThrow(ReservationNotFoundException::new);
         Reservation cancelledReservation = reserveBookRepository.save(Reservation.cancelledReservation(reservation));

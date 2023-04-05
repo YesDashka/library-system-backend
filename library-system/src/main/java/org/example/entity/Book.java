@@ -1,10 +1,16 @@
 package org.example.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Builder;
-import org.example.exception.NoSuchCopiesAvailableException;
 
-import java.util.*;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "book")
@@ -16,38 +22,55 @@ public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private long id;
+    private final long id;
 
     @Column(name = "title", nullable = false)
-    private String title;
+    private final String title;
 
     @Column(name = "author", nullable = false)
-    private String author;
+    private final String author;
 
     @Column(name = "description")
-    private String description;
+    private final String description;
 
     @Column(name = "categories", nullable = false)
     @ElementCollection
-    private Set<String> categories;
+    private final Set<String> categories;
 
     @Column(name = "copies")
-    private int copies;
+    private final int copies;
 
     @Column(name = "copies_available", nullable = false)
-    private int copiesAvailable;
+    private final int copiesAvailable;
 
     @Column(name = "image")
-    private String image;
+    private final String image;
 
     @Column(name = "price", nullable = false)
-    private double price;
+    private final double price;
 
     public Book() {
+        this.id = 0;
+        this.title = null;
+        this.author = null;
+        this.description = null;
+        this.categories = null;
+        this.copies = 0;
+        this.copiesAvailable = 0;
+        this.image = null;
+        this.price = 0;
     }
 
-    public Book(long id, String title, String author, String description, Set<String> categories, int copies,
-                int copiesAvailable, String image, double price
+    public Book(
+            long id,
+            String title,
+            String author,
+            String description,
+            Set<String> categories,
+            int copies,
+            int copiesAvailable,
+            String image,
+            double price
     ) {
         this.id = id;
         this.title = title;
@@ -64,75 +87,32 @@ public class Book {
         return id;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getAuthor() {
         return author;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
     public String getDescription() {
         return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public Set<String> getCategories() {
         return categories;
     }
 
-    public void setCategories(Set<String> categories) {
-        this.categories = categories;
-    }
-    public void setCategories(String categories) {
-        this.categories = new HashSet<>(Arrays.asList(categories.split(CATEGORIES_SEPARATOR)));
-    }
-
-    public int getCopies() {
-        return copies;
-    }
-
-    public void setCopies(int copies) {
-        this.copies = copies;
-    }
-
     public int getCopiesAvailable() {
         return copiesAvailable;
-    }
-
-    public void setCopiesAvailable(int copiesAvailable) {
-        this.copiesAvailable = copiesAvailable;
     }
 
     public String getImage() {
         return image;
     }
 
-    public void setImage(String image) {
-        this.image = image;
-    }
-
     public double getPrice() {
         return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
     }
 
     @Override
@@ -165,4 +145,6 @@ public class Book {
                 ", price=" + price +
                 '}';
     }
+
+
 }

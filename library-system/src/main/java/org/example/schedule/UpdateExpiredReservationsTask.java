@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class UpdateExpiredReservationsTask {
@@ -38,7 +39,7 @@ public class UpdateExpiredReservationsTask {
         List<Reservation> reservations = reservationRepository
                 .findAllByStatusAndEndDateBefore(ReservationStatus.RESERVED, LocalDate.now())
                 .stream()
-                .toList();
+                .collect(Collectors.toList());
         if (reservations.isEmpty()) {
             return;
         }
@@ -50,7 +51,7 @@ public class UpdateExpiredReservationsTask {
         List<Reservation> failedReservations = new ArrayList<>();
         reservations.forEach(reservation ->
                 booksToUpdate.stream()
-                        .filter(book -> reservation.getBookId() == book.getId())
+                        .filter(reservation::belongsTo)
                         .forEach(book -> {
                             try {
                                 reservationService.expireReservation(reservation, book);
@@ -69,7 +70,9 @@ public class UpdateExpiredReservationsTask {
     }
 
     private List<Book> findBooksByReservations(List<Reservation> reservations) {
-        List<Long> bookIdsToUpdate = reservations.stream().map(Reservation::getBookId).toList();
+        List<Long> bookIdsToUpdate = reservations.stream()
+                .map(Reservation::getBookId)
+                .collect(Collectors.toList());
         return bookRepository.findAllByIdIn(bookIdsToUpdate);
     }
 

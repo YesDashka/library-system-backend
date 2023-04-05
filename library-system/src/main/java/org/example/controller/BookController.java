@@ -32,19 +32,6 @@ public class BookController {
         return new ResponseEntity<>(BookDto.convertToBookDto(book), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(
-            @PathVariable("id") long id,
-            @RequestBody BookDto bookDto
-    ) {
-        Book book = BookDto.convertToBook(bookDto);
-        book.setId(id);
-        Book updatedBook = bookService.updateBook(id, book);
-
-        return new ResponseEntity<>(updatedBook, HttpStatus.OK);
-
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<Book> getBookById(@PathVariable("id") long id) {
         Book book = bookService.getBookById(id);
@@ -63,5 +50,6 @@ public class BookController {
         bookService.deleteBookById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 }
 

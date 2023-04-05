@@ -24,36 +24,36 @@ public class LibrarySystemApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) {
 
-		Book book1  = new Book();
-		book1.setTitle("Title1");
-		book1.setAuthor("Author1");
-		book1.setDescription("Description1");
-		book1.setCategories("Category1");
-		book1.setCopies(150);
-		book1.setCopiesAvailable(50);
-		book1.setPrice(234.6);
-		bookRepository.save(book1);
-
-
-		Book book2  = new Book();
-		book2.setTitle("Title2");
-		book2.setAuthor("Author2");
-		book2.setDescription("Description2");
-		book2.setCategories("Category2, Category3");
-		book2.setCopies(170);
-		book2.setCopiesAvailable(70);
-		book2.setPrice(154.6);
-		bookRepository.save(book2);
-
-		Book book3  = new Book();
-		book3.setTitle("Title3");
-		book3.setAuthor("Author3");
-		book3.setDescription("Description3");
-		book3.setCategories("Category3");
-		book3.setCopies(160);
-		book3.setCopiesAvailable(60);
-		book3.setPrice(345.7);
-		bookRepository.save(book3);
+//		Book book1  = new Book();
+//		book1.setTitle("Title1");
+//		book1.setAuthor("Author1");
+//		book1.setDescription("Description1");
+//		book1.setCategories("Category1");
+//		book1.setCopies(150);
+//		book1.setCopiesAvailable(50);
+//		book1.setPrice(234.6);
+//		bookRepository.save(book1);
+//
+//
+//		Book book2  = new Book();
+//		book2.setTitle("Title2");
+//		book2.setAuthor("Author2");
+//		book2.setDescription("Description2");
+//		book2.setCategories("Category2, Category3");
+//		book2.setCopies(170);
+//		book2.setCopiesAvailable(70);
+//		book2.setPrice(154.6);
+//		bookRepository.save(book2);
+//
+//		Book book3  = new Book();
+//		book3.setTitle("Title3");
+//		book3.setAuthor("Author3");
+//		book3.setDescription("Description3");
+//		book3.setCategories("Category3");
+//		book3.setCopies(160);
+//		book3.setCopiesAvailable(60);
+//		book3.setPrice(345.7);
+//		bookRepository.save(book3);
 
 //		Category category1 = new Category();
 //		category1.setName("Love");
