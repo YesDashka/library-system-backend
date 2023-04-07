@@ -3,6 +3,7 @@ package org.example.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Entity
 @Table(name = "reservation")
@@ -11,9 +12,8 @@ public class Reservation {
     private static final long RESERVATION_DAYS_PERIOD = 7;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private final long id;
+    private final String id;
 
     @Column(name = "book_id")
     private final long bookId;
@@ -32,7 +32,7 @@ public class Reservation {
     private final LocalDate endDate;
 
     protected Reservation() {
-        this.id = 0;
+        this.id = "";
         this.bookId = 0;
         this.count = 0;
         this.status = null;
@@ -41,14 +41,14 @@ public class Reservation {
     }
 
     private Reservation(long bookId, int count, ReservationStatus status, LocalDate startDate, LocalDate endDate) {
-        this.id = 0L;
+        this.id = "";
         this.bookId = bookId;
         this.count = count;
         this.status = status;
         this.startDate = startDate;
         this.endDate = endDate;
     }
-    private Reservation(long id, long bookId, int count, ReservationStatus status, LocalDate startDate, LocalDate endDate) {
+    private Reservation(String id, long bookId, int count, ReservationStatus status, LocalDate startDate, LocalDate endDate) {
         this.id = id;
         this.bookId = bookId;
         this.count = count;
@@ -64,8 +64,11 @@ public class Reservation {
         if (count < 0L) {
             throw new RuntimeException("Invalid count");
         }
+        String reservationId = UUID.randomUUID().toString();
         LocalDate now = LocalDate.now();
+
         return new Reservation(
+                reservationId,
                 bookId,
                 count,
                 ReservationStatus.NOT_RESERVED,
@@ -129,11 +132,6 @@ public class Reservation {
     }
 
 
-
-    public boolean belongsTo(Book book) {
-        return id == book.getId();
-    }
-
     public long getBookId() {
         return bookId;
     }
@@ -150,7 +148,7 @@ public class Reservation {
         return endDate;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 

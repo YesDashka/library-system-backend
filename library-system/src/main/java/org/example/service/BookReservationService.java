@@ -11,12 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface BookReservationService {
 
-    int reserve(long bookId, int count) throws BookNotAvailableException, NoSuchCopiesAvailableException, BookNotFoundException;
+    Reservation reserve(long bookId, int count) throws BookNotAvailableException, NoSuchCopiesAvailableException, BookNotFoundException;
 
     @SneakyThrows(value = NoSuchCopiesAvailableException.class)
     @Transactional
-    int expireReservation(Reservation reservation) throws BookNotFoundException;
+    Reservation expireReservation(Reservation reservation) throws BookNotFoundException;
 
-    int cancelReservation(long reservationId) throws ReservationNotFoundException, BookNotAvailableException, BookNotFoundException;
+    Reservation cancelReservation(String reservationId) throws ReservationNotFoundException, BookNotAvailableException, BookNotFoundException;
 
 }

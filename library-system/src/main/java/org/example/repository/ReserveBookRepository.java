@@ -10,13 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface ReserveBookRepository extends JpaRepository<Reservation, Long> {
-
-    @Modifying
-    @Transactional
-    @Query("update Reservation set status = ?2 where id = ?1")
-    void updateReservationStatus(long reservationId, ReservationStatus status);
-
+public interface ReserveBookRepository extends JpaRepository<Reservation, String> {
     List<Reservation> findAllByStatusAndEndDateBefore(ReservationStatus status, LocalDate endDate);
 
 }

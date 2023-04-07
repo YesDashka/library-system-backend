@@ -8,7 +8,7 @@ import org.example.exception.NoSuchCopiesAvailableException;
 import org.example.repository.BookRepository;
 import org.example.repository.ReserveBookRepository;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -22,10 +22,11 @@ class ReservationEntryService {
         this.reserveBookRepository = reserveBookRepository;
     }
 
-    public int updateReservation(Reservation reservation, ReservationStatus newStatus) throws NoSuchCopiesAvailableException, BookNotFoundException {
+    @Transactional
+    public Reservation updateReservation(Reservation reservation, ReservationStatus newStatus) throws NoSuchCopiesAvailableException, BookNotFoundException {
         Book book = bookRepository.findById(reservation.getBookId()).orElseThrow(BookNotFoundException::new);
         if (reservation.getStatus() == newStatus) {
-            return book.getCopiesAvailable();
+            return reservation;
         }
 
         final int copiesAvailable = book.getCopiesAvailable();
@@ -43,7 +44,7 @@ class ReservationEntryService {
 
         bookRepository.updateCopiesAvailable(book.getId(), copies);
         reserveBookRepository.save(newReservation);
-        return copies;
+        return newReservation;
     }
 
 }

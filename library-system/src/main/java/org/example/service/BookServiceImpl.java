@@ -2,6 +2,7 @@ package org.example.service;
 
 import org.example.dto.BookDto;
 import org.example.entity.Book;
+import org.example.exception.BookNotFoundException;
 import org.example.repository.BookRepository;
 import org.springframework.stereotype.Service;
 
@@ -35,14 +36,14 @@ public class BookServiceImpl implements BookService{
     }
 
     @Override
-    public void deleteBookById(long bookId) {
-        Book book = bookRepository.findById(bookId).orElseThrow(RuntimeException::new);
+    public void deleteBookById(long bookId) throws BookNotFoundException {
+        Book book = bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new);
         bookRepository.delete(book);
     }
 
     @Override
-    public Book getBookById(long bookId) {
-        return bookRepository.findById(bookId).orElseThrow(RuntimeException::new);
+    public Book getBookById(long bookId) throws BookNotFoundException {
+        return bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new);
     }
 
     @Override

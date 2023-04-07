@@ -2,6 +2,7 @@ package org.example.controller;
 
 import org.example.dto.BookDto;
 import org.example.entity.Book;
+import org.example.exception.BookNotFoundException;
 import org.example.service.BookService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Book> getBookById(@PathVariable("id") long id) {
+    public ResponseEntity<Book> getBookById(@PathVariable("id") long id) throws BookNotFoundException {
         Book book = bookService.getBookById(id);
         return new ResponseEntity<>(book, HttpStatus.OK);
     }
@@ -46,7 +47,7 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteBookById(@PathVariable("id") long id) {
+    public ResponseEntity<HttpStatus> deleteBookById(@PathVariable("id") long id) throws BookNotFoundException {
         bookService.deleteBookById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }

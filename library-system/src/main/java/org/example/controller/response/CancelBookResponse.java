@@ -1,6 +1,6 @@
 package org.example.controller.response;
-public class CancelBookResponse {
-    protected int copiesLeft;
+public class CancelBookResponse implements DefaultHttpResponse {
+    protected String reservationId;
     protected String message;
 
     public CancelBookResponse() {
@@ -10,17 +10,13 @@ public class CancelBookResponse {
         this.message = message;
     }
 
-    public CancelBookResponse(int copiesLeft, String message) {
-        this.copiesLeft = copiesLeft;
+    public CancelBookResponse(String reservationId, String message) {
+        this.reservationId = reservationId;
         this.message = message;
     }
 
-    public int getCopiesLeft() {
-        return copiesLeft;
-    }
-
-    public void setCopiesLeft(int copiesLeft) {
-        this.copiesLeft = copiesLeft;
+    public String getReservationId() {
+        return reservationId;
     }
 
     public String getMessage() {
