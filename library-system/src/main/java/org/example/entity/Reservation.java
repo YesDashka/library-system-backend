@@ -40,14 +40,6 @@ public class Reservation {
         this.endDate = null;
     }
 
-    private Reservation(long bookId, int count, ReservationStatus status, LocalDate startDate, LocalDate endDate) {
-        this.id = "";
-        this.bookId = bookId;
-        this.count = count;
-        this.status = status;
-        this.startDate = startDate;
-        this.endDate = endDate;
-    }
     private Reservation(String id, long bookId, int count, ReservationStatus status, LocalDate startDate, LocalDate endDate) {
         this.id = id;
         this.bookId = bookId;
@@ -78,50 +70,22 @@ public class Reservation {
     }
 
     public static Reservation expiredReservation(Reservation reservation) {
-        return new Reservation(
-                reservation.id,
-                reservation.bookId,
-                reservation.count,
-                ReservationStatus.EXPIRED,
-                reservation.startDate,
-                reservation.endDate
-        );
+        return create(reservation, ReservationStatus.EXPIRED);
     }
 
     public static Reservation cancelledReservation(Reservation reservation) {
-        return new Reservation(
-                reservation.id,
-                reservation.bookId,
-                reservation.count,
-                ReservationStatus.CANCELLED,
-                reservation.startDate,
-                reservation.endDate
-        );
+        return create(reservation, ReservationStatus.CANCELLED);
     }
 
     public static Reservation committedReservation(Reservation reservation) {
-        return new Reservation(
-                reservation.id,
-                reservation.bookId,
-                reservation.count,
-                ReservationStatus.COMMITTED,
-                reservation.startDate,
-                reservation.endDate
-        );
+        return create(reservation, ReservationStatus.COMMITTED);
     }
 
     public static Reservation reserved(Reservation reservation) {
-        return new Reservation(
-                reservation.id,
-                reservation.bookId,
-                reservation.count,
-                ReservationStatus.RESERVED,
-                reservation.startDate,
-                reservation.endDate
-        );
+        return create(reservation, ReservationStatus.RESERVED);
     }
 
-    public static Reservation reservationFactory(Reservation reservation, ReservationStatus status) {
+    public static Reservation factory(Reservation reservation, ReservationStatus status) {
         return switch (status) {
             case RESERVED -> reserved(reservation);
             case EXPIRED -> expiredReservation(reservation);
@@ -131,6 +95,16 @@ public class Reservation {
         };
     }
 
+    private static Reservation create(Reservation reservation, ReservationStatus reservationStatus) {
+        return new Reservation(
+                reservation.id,
+                reservation.bookId,
+                reservation.count,
+                reservationStatus,
+                reservation.startDate,
+                reservation.endDate
+        );
+    }
 
     public long getBookId() {
         return bookId;

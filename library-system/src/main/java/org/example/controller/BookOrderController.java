@@ -3,7 +3,6 @@ package org.example.controller;
 import org.example.controller.response.BookOrderResponse;
 import org.example.controller.response.DefaultErrorMessage;
 import org.example.controller.response.DefaultHttpResponse;
-import org.example.controller.response.ReserveBookResponse;
 import org.example.entity.BookOrder;
 import org.example.entity.Reservation;
 import org.example.exception.BookNotFoundException;
@@ -12,7 +11,6 @@ import org.example.exception.ReservationNotFoundException;
 import org.example.service.BookOrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +29,7 @@ public class BookOrderController {
     public ResponseEntity<DefaultHttpResponse> orderReservedBook(@PathVariable("reservationId") String id) {
         try {
             Reservation reservation = bookOrderService.orderReserved(id);
-            BookOrder bookOrder = BookOrder.reservationToBookOrder(reservation);
+            BookOrder bookOrder = BookOrder.newOrder(reservation);
             DefaultHttpResponse response = new BookOrderResponse(bookOrder.getId(), "Successfully ordered the reserved book");
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (ReservationNotFoundException | ReservationNotAvailableException | BookNotFoundException e) {

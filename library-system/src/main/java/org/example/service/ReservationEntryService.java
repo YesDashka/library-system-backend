@@ -28,6 +28,9 @@ class ReservationEntryService {
         if (reservation.getStatus() == newStatus) {
             return reservation;
         }
+        if (reservation.getStatus().isMoreThan(newStatus)) {
+            throw new UnsupportedOperationException("Can't update reservation %s to previous %s stage.".formatted(reservation.getStatus(), newStatus));
+        }
 
         final int copiesAvailable = book.getCopiesAvailable();
         int reservationCopies = switch (reservation.getStatus()) {
@@ -38,9 +41,9 @@ class ReservationEntryService {
         int copies = copiesAvailable + reservationCopies;
         if (copies < 0) {
             throw new NoSuchCopiesAvailableException("No such copies available: missing %d books"
-                    .formatted(Math.abs(copies)), book.getCopiesAvailable());
+                    .formatted(Math.abs(copies)));
         }
-        Reservation newReservation = Reservation.reservationFactory(reservation, newStatus);
+        Reservation newReservation = Reservation.factory(reservation, newStatus);
 
         bookRepository.updateCopiesAvailable(book.getId(), copies);
         reserveBookRepository.save(newReservation);

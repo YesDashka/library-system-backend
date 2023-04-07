@@ -41,7 +41,7 @@ public class BookReservationController {
             ReserveBookResponse reserveBookResponse = new ReserveBookResponse(reservation.getId(), "Successfully reserved book by id %d".formatted(id));
             return new ResponseEntity<>(reserveBookResponse, HttpStatus.OK);
         } catch (BookNotAvailableException | BookNotFoundException e) {
-            logger.warn("book not available or not exception for: bookId={}, count={}, errorMessage={}", id, count, e.getMessage());
+            logger.warn("book not available or not found for: bookId={}, count={}, errorMessage={}", id, count, e.getMessage());
             DefaultHttpResponse response = new DefaultErrorMessage(e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (NoSuchCopiesAvailableException e) {

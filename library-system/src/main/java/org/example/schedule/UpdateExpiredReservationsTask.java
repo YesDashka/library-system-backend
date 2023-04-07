@@ -24,13 +24,11 @@ public class UpdateExpiredReservationsTask {
     private static final long UPDATE_EXPIRED_RESERVATIONS_TASK_PERIOD = 5000;
 
     private final ReserveBookRepository reservationRepository;
-    private final BookRepository bookRepository;
     private final BookReservationService reservationService;
 
 
-    public UpdateExpiredReservationsTask(ReserveBookRepository repository, BookRepository bookRepository, BookReservationService reservationService) {
+    public UpdateExpiredReservationsTask(ReserveBookRepository repository, BookReservationService reservationService) {
         this.reservationRepository = repository;
-        this.bookRepository = bookRepository;
         this.reservationService = reservationService;
     }
 

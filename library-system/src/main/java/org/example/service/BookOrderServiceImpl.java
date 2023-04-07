@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class BookOrderServiceImpl implements BookOrderService{
+
     private final BookOrderRepository bookOrderRepository;
     private final ReserveBookRepository reserveBookRepository;
     private final ReservationEntryService reservationEntryService;
@@ -29,9 +30,9 @@ public class BookOrderServiceImpl implements BookOrderService{
     }
 
     @Override
-    public Reservation  order(long bookId, int count) throws BookNotFoundException, NoSuchCopiesAvailableException {
+    public Reservation order(long bookId, int count) throws BookNotFoundException, NoSuchCopiesAvailableException {
         Reservation reservation = reserveBookRepository.save(Reservation.newReservation(bookId, count));
-        BookOrder bookOrder = BookOrder.newOrder(reservation.getId());
+        BookOrder bookOrder = BookOrder.newOrder(reservation);
         bookOrderRepository.save(bookOrder);
 
         return reservationEntryService.updateReservation(reservation, ReservationStatus.COMMITTED);
@@ -45,7 +46,7 @@ public class BookOrderServiceImpl implements BookOrderService{
         if (reservation.getStatus() != ReservationStatus.RESERVED) {
             throw new ReservationNotAvailableException("reservation must have status %s to make an order".formatted(ReservationStatus.RESERVED.name()));
         }
-        BookOrder newOrder = BookOrder.newOrder(reservation.getId());
+        BookOrder newOrder = BookOrder.newOrder(reservation);
         bookOrderRepository.save(newOrder);
         return reservationEntryService.updateReservation(reservation, ReservationStatus.COMMITTED);
     }

@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class BookReservationServiceImpl implements BookReservationService {
+
     private final ReserveBookRepository reserveBookRepository;
     private final ReservationEntryService reservationEntryService;
 

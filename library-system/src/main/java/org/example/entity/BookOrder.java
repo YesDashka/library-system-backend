@@ -1,8 +1,6 @@
 package org.example.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import org.example.exception.ReservationNotAvailableException;
 
 import java.time.LocalDate;
 
@@ -13,8 +11,10 @@ public class BookOrder {
     @Id
     @Column(name = "id")
     private final String id;
+
     @Column(name = "reservation_id")
     private final String reservationId;
+
     @Column(name = "date")
     private final LocalDate date;
 
@@ -30,11 +30,7 @@ public class BookOrder {
         this.date = LocalDate.now();
     }
 
-    public static BookOrder newOrder(String reservationId) {
-        return new BookOrder(reservationId);
-    }
-
-    public static BookOrder reservationToBookOrder(Reservation reservation) {
+    public static BookOrder newOrder(Reservation reservation) {
         if (reservation.getStatus() != ReservationStatus.COMMITTED) {
             throw new IllegalArgumentException("Cannot convert non-committed reservation to book order");
         }
