@@ -46,7 +46,6 @@ public class BookOrderServiceImpl implements BookOrderService{
                 .orElseThrow(ReservationNotFoundException::new);
         BookOrder newOrder = BookOrder.newOrder(reservation);
         newOrder = bookOrderRepository.save(newOrder);
-        System.out.println(newOrder);
 //        todo write call to payment service here
         reservationEntryService.updateReservation(reservation, ReservationStatus.COMMITTED);
         return newOrder;
