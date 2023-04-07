@@ -27,8 +27,7 @@ public class BookReservationServiceImpl implements BookReservationService {
 
     @Override
     public Reservation reserve(long bookId, int count) throws NoSuchCopiesAvailableException, BookNotFoundException {
-        Reservation reservation = Reservation.newReservation(bookId, count);
-        return reservationEntryService.updateReservation(reservation, ReservationStatus.RESERVED);
+        return reservationEntryService.createNewReservation(bookId, count);
     }
 
     @SneakyThrows(value = NoSuchCopiesAvailableException.class)

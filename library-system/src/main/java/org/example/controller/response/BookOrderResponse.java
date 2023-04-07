@@ -1,29 +1,27 @@
 package org.example.controller.response;
 
-import org.example.entity.Reservation;
-
 public class BookOrderResponse implements DefaultHttpResponse{
-    private String reservationId;
+    private String orderId;
     private String message;
 
     public BookOrderResponse() {
     }
 
-    public BookOrderResponse(String reservationId, String message) {
-        this.reservationId = reservationId;
+    public BookOrderResponse(String orderId, String message) {
+        this.orderId = orderId;
         this.message = message;
     }
 
-    public String  getReservation() {
-        return reservationId;
+    public String getOrderId() {
+        return orderId;
     }
 
     public String getMessage() {
         return message;
     }
 
-    public void setReservationId(String reservationId) {
-        this.reservationId = reservationId;
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
     }
 
     public void setMessage(String message) {

@@ -30,25 +30,26 @@ public class BookOrderServiceImpl implements BookOrderService{
     }
 
     @Override
-    public Reservation order(long bookId, int count) throws BookNotFoundException, NoSuchCopiesAvailableException {
-        Reservation reservation = reserveBookRepository.save(Reservation.newReservation(bookId, count));
-        BookOrder bookOrder = BookOrder.newOrder(reservation);
+    public BookOrder order(long bookId, int count) throws BookNotFoundException, NoSuchCopiesAvailableException, ReservationNotAvailableException {
+        Reservation newReservation = reservationEntryService.createNewReservation(bookId, count);
+        BookOrder bookOrder = BookOrder.newOrder(newReservation);
         bookOrderRepository.save(bookOrder);
-
-        return reservationEntryService.updateReservation(reservation, ReservationStatus.COMMITTED);
+//        todo write call to payment service here
+        reservationEntryService.updateReservation(newReservation, ReservationStatus.COMMITTED);
+        return bookOrder;
     }
 
     @SneakyThrows(value = NoSuchCopiesAvailableException.class)
     @Override
-    public Reservation orderReserved(String reservationId) throws ReservationNotFoundException, BookNotFoundException, ReservationNotAvailableException {
+    public BookOrder orderReserved(String reservationId) throws ReservationNotFoundException, BookNotFoundException, ReservationNotAvailableException {
         Reservation reservation = reserveBookRepository.findById(reservationId)
                 .orElseThrow(ReservationNotFoundException::new);
-        if (reservation.getStatus() != ReservationStatus.RESERVED) {
-            throw new ReservationNotAvailableException("reservation must have status %s to make an order".formatted(ReservationStatus.RESERVED.name()));
-        }
         BookOrder newOrder = BookOrder.newOrder(reservation);
-        bookOrderRepository.save(newOrder);
-        return reservationEntryService.updateReservation(reservation, ReservationStatus.COMMITTED);
+        newOrder = bookOrderRepository.save(newOrder);
+        System.out.println(newOrder);
+//        todo write call to payment service here
+        reservationEntryService.updateReservation(reservation, ReservationStatus.COMMITTED);
+        return newOrder;
     }
 
 }

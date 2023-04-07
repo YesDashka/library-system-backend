@@ -28,8 +28,8 @@ public class BookOrderController {
     @PutMapping("/order/{reservationId}")
     public ResponseEntity<DefaultHttpResponse> orderReservedBook(@PathVariable("reservationId") String id) {
         try {
-            Reservation reservation = bookOrderService.orderReserved(id);
-            BookOrder bookOrder = BookOrder.newOrder(reservation);
+            BookOrder bookOrder = bookOrderService.orderReserved(id);
+            System.out.println(bookOrder);
             DefaultHttpResponse response = new BookOrderResponse(bookOrder.getId(), "Successfully ordered the reserved book");
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (ReservationNotFoundException | ReservationNotAvailableException | BookNotFoundException e) {

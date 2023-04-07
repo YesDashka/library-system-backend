@@ -1,4 +1,5 @@
 package org.example.controller.response;
+
 public class CancelBookResponse implements DefaultHttpResponse {
     protected String reservationId;
     protected String message;

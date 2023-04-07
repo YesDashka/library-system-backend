@@ -13,6 +13,4 @@ import java.util.List;
 public interface ReserveBookRepository extends JpaRepository<Reservation, String> {
     List<Reservation> findAllByStatusAndEndDateBefore(ReservationStatus status, LocalDate endDate);
 
-    @Override
-    <S extends Reservation> S save(S entity);
 }

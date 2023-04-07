@@ -1,8 +1,10 @@
 package org.example.entity;
 
 import jakarta.persistence.*;
+import org.example.exception.ReservationNotAvailableException;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Entity
 @Table(name = "book_order")
@@ -18,23 +20,30 @@ public class BookOrder {
     @Column(name = "date")
     private final LocalDate date;
 
+
     protected BookOrder() {
-        this.reservationId = "";
         this.id = "";
+        this.reservationId = "";
         this.date = null;
     }
 
-    public BookOrder(String reservationId) {
-        this.id = "";
+    private BookOrder(String id, String reservationId, LocalDate date) {
+        this.id = id;
         this.reservationId = reservationId;
-        this.date = LocalDate.now();
+        this.date = date;
     }
 
-    public static BookOrder newOrder(Reservation reservation) {
-        if (reservation.getStatus() != ReservationStatus.COMMITTED) {
-            throw new IllegalArgumentException("Cannot convert non-committed reservation to book order");
+    public static BookOrder newOrder(Reservation reservation) throws ReservationNotAvailableException {
+        if (reservation.getStatus() != ReservationStatus.RESERVED) {
+            throw new ReservationNotAvailableException("reservation must have status %s to make an order".formatted(ReservationStatus.RESERVED.name()));
         }
-        return new BookOrder(reservation.getId());
+        String id = UUID.randomUUID().toString();
+        LocalDate date = LocalDate.now();
+        return new BookOrder(
+                id,
+                reservation.getId(),
+                date
+        );
     }
 
     public String getId() {
@@ -49,12 +58,4 @@ public class BookOrder {
         return date;
     }
 
-    @Override
-    public String toString() {
-        return "BookOrder{" +
-                "id=" + id +
-                ", reservationId=" + reservationId +
-                ", date=" + date +
-                '}';
-    }
 }

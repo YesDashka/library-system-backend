@@ -38,7 +38,7 @@ public class UpdateExpiredReservationsTask {
         List<Reservation> reservations = reservationRepository
                 .findAllByStatusAndEndDateBefore(ReservationStatus.RESERVED, LocalDate.now())
                 .stream()
-                .toList();
+                .collect(Collectors.toList());
         if (reservations.isEmpty()) {
             return;
         }
