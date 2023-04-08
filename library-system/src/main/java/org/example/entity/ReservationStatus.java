@@ -3,7 +3,7 @@ package org.example.entity;
 public enum ReservationStatus {
     NOT_RESERVED(1),
     RESERVED(2),
-    EXPIRED(3), CANCELLED(3),
+    ERROR(3), EXPIRED(3), CANCELLED(3),
     COMMITTED(4);
 
     private final int stage;

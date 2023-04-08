@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class UpdateExpiredReservationsTask {
 
     private static final Logger logger = LoggerFactory.getLogger(UpdateExpiredReservationsTask.class);
-    private static final long UPDATE_EXPIRED_RESERVATIONS_TASK_PERIOD = 5000;
+    private static final long UPDATE_EXPIRED_RESERVATIONS_TASK_PERIOD = 60000 * 60 * 24; // 1 day
 
     private final ReserveBookRepository reservationRepository;
     private final BookReservationService reservationService;
