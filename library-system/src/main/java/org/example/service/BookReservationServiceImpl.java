@@ -32,17 +32,17 @@ public class BookReservationServiceImpl implements BookReservationService {
 
     @SneakyThrows(value = NoSuchCopiesAvailableException.class)
     @Override
-    public Reservation expireReservation(Reservation reservation) throws BookNotFoundException {
+    public Reservation expireReservation(Reservation reservation) {
         return reservationEntryService.updateReservation(reservation, ReservationStatus.EXPIRED);
     }
 
     @SneakyThrows(value = NoSuchCopiesAvailableException.class)
     @Transactional
     @Override
-    public Reservation cancelReservation(String reservationId) throws ReservationNotFoundException, BookNotFoundException {
+    public Reservation cancelReservation(String reservationId) {
         final Reservation reservation = reserveBookRepository
                 .findById(reservationId)
-                .orElseThrow(ReservationNotFoundException::new);
+                .orElseThrow(() -> new ReservationNotFoundException(reservationId));
         return reservationEntryService.updateReservation(reservation, ReservationStatus.CANCELLED);
     }
 }

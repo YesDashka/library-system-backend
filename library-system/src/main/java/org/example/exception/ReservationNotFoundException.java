@@ -1,11 +1,10 @@
 package org.example.exception;
 
-import java.io.IOException;
 
-public class ReservationNotFoundException extends IOException {
+public class ReservationNotFoundException extends RuntimeException {
 
-    public ReservationNotFoundException() {
-        super("Reservation not found");
+    public ReservationNotFoundException(String reservationId) {
+        super("Reservation not found with id: " + reservationId);
     }
 
 }

@@ -12,8 +12,8 @@ public interface BookReservationService {
     Reservation reserve(long bookId, int count) throws BookNotAvailableException, NoSuchCopiesAvailableException, BookNotFoundException;
 
     @SneakyThrows(value = NoSuchCopiesAvailableException.class)
-    Reservation expireReservation(Reservation reservation) throws BookNotFoundException;
+    Reservation expireReservation(Reservation reservation);
 
-    Reservation cancelReservation(String reservationId) throws ReservationNotFoundException, BookNotAvailableException, BookNotFoundException;
+    Reservation cancelReservation(String reservationId) throws BookNotAvailableException;
 
 }

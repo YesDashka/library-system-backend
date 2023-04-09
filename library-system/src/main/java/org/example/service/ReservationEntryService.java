@@ -30,7 +30,7 @@ class ReservationEntryService {
 
     @Transactional
     public Reservation updateReservation(Reservation reservation, ReservationStatus newStatus) throws NoSuchCopiesAvailableException, BookNotFoundException {
-        Book book = bookRepository.findById(reservation.getBookId()).orElseThrow(BookNotFoundException::new);
+        Book book = bookRepository.findById(reservation.getBookId()).orElseThrow(() -> new BookNotFoundException(reservation.getBookId()));
         if (reservation.getStatus() == newStatus) {
             return reservation;
         }

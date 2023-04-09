@@ -37,13 +37,13 @@ public class BookServiceImpl implements BookService{
 
     @Override
     public void deleteBookById(long bookId) throws BookNotFoundException {
-        Book book = bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new);
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookNotFoundException(bookId));
         bookRepository.delete(book);
     }
 
     @Override
     public Book getBookById(long bookId) throws BookNotFoundException {
-        return bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new);
+        return bookRepository.findById(bookId).orElseThrow(() -> new BookNotFoundException(bookId));
     }
 
     @Override

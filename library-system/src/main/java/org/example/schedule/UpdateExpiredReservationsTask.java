@@ -48,7 +48,7 @@ public class UpdateExpiredReservationsTask {
         reservations.forEach(reservation ->{
             try {
                 reservationService.expireReservation(reservation);
-            } catch (RuntimeException | BookNotFoundException e) {
+            } catch (RuntimeException e) {
                 logger.error("Failed to expire reservation with id {}: {}", reservation.getId(), e.getMessage());
                 failedReservations.add(reservation);
             }

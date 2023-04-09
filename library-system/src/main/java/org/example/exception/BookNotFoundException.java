@@ -1,11 +1,9 @@
 package org.example.exception;
 
-import java.io.IOException;
+public class BookNotFoundException extends RuntimeException {
 
-public class BookNotFoundException extends IOException {
-
-    public BookNotFoundException() {
-        super("Book not found");
+    public BookNotFoundException(long bookId) {
+        super("Book not found with id: " + bookId);
     }
 
 }

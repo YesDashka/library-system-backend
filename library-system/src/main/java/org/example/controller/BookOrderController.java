@@ -34,7 +34,7 @@ public class BookOrderController {
         try {
             BookOrderResult bookOrder = bookOrderService.order(request.getBookId(), request.getCount());
             return new ResponseEntity<>(bookOrder, HttpStatus.CREATED);
-        } catch (ReservationNotAvailableException | BookNotFoundException | NoSuchCopiesAvailableException e) {
+        } catch (ReservationNotAvailableException | NoSuchCopiesAvailableException e) {
 //            DefaultErrorMessage response = new DefaultErrorMessage(e.getMessage());
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (PaymentFailedException e) {
@@ -48,7 +48,7 @@ public class BookOrderController {
             BookOrderResult bookOrder = bookOrderService.orderReserved(id);
 //            DefaultHttpResponse response = new BookOrderResponse(bookOrder.getId(), "Successfully ordered the reserved book");
             return new ResponseEntity<>(bookOrder, HttpStatus.CREATED);
-        } catch (ReservationNotFoundException | ReservationNotAvailableException | BookNotFoundException e) {
+        } catch (ReservationNotAvailableException e) {
 //            DefaultErrorMessage response = new DefaultErrorMessage(e.getMessage());
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }

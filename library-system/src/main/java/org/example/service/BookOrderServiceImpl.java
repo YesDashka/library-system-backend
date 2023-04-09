@@ -73,7 +73,7 @@ public class BookOrderServiceImpl implements BookOrderService {
 //    todo order should have many books
     public BookOrderResult orderReserved(String reservationId) throws ReservationNotFoundException, BookNotFoundException, ReservationNotAvailableException {
         Reservation reservation = reserveBookRepository.findById(reservationId)
-                .orElseThrow(ReservationNotFoundException::new);
+                .orElseThrow(() -> new ReservationNotFoundException(reservationId));
 //        todo write call to payment service here
         reservationEntryService.updateReservation(reservation, ReservationStatus.COMMITTED);
         return null;
