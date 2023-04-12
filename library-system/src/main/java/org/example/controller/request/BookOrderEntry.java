@@ -1,6 +1,6 @@
 package org.example.controller.request;
 
-public class OrderBookRequest {
+public class BookOrderEntry {
 
     private long bookId;
     private int count;

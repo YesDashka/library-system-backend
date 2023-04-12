@@ -7,9 +7,11 @@ import org.example.exception.BookNotFoundException;
 import org.example.exception.NoSuchCopiesAvailableException;
 import org.example.exception.ReservationNotFoundException;
 
+import java.util.Map;
+
 public interface BookReservationService {
 
-    Reservation reserve(long bookId, int count) throws BookNotAvailableException, NoSuchCopiesAvailableException, BookNotFoundException;
+    Reservation reserve(Map<Long, Integer> bookCounts) throws BookNotAvailableException, NoSuchCopiesAvailableException, BookNotFoundException;
 
     @SneakyThrows(value = NoSuchCopiesAvailableException.class)
     Reservation expireReservation(Reservation reservation);

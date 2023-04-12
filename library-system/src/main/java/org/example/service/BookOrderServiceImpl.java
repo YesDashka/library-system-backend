@@ -15,17 +15,19 @@ import org.example.service.order.BookOrderRequest;
 import org.example.service.order.BookOrderResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class BookOrderServiceImpl implements BookOrderService {
-
-//    todo move to application.properties
-    private static final URI ORDER_SERVICE_URL = URI.create("http://localhost:8050/api/order");
+    @Value("${order.service.url}")
+    private URI ORDER_SERVICE_URL;
     private final ReserveBookRepository reserveBookRepository;
     private final ReservationEntryService reservationEntryService;
 
@@ -44,26 +46,36 @@ public class BookOrderServiceImpl implements BookOrderService {
     }
 
     @Override
-//    todo order should have many books
-    public BookOrderResult order(long bookId, int count) throws NoSuchCopiesAvailableException, BookNotFoundException, PaymentFailedException {
-        Reservation newReservation = reservationEntryService.createNewReservation(bookId, count);
-        logger.info("create new reservation for: bookId={}, count={}, reservationStatus={}", bookId, count, newReservation.getStatus());
+    public BookOrderResult order(BookOrderInfo... bookOrderInfos) throws NoSuchCopiesAvailableException, BookNotFoundException, PaymentFailedException {
+        List<Reservation> reservations = new ArrayList<>();
+        for(BookOrderInfo bookOrderInfo: bookOrderInfos) {
+            Reservation newReservation = reservationEntryService.createNewReservation(bookOrderInfo.getBookId(), bookOrderInfo.getCount());
+            logger.info("create new reservation for: bookId={}, count={}, reservationStatus={}", bookOrderInfo.getBookId(),  bookOrderInfo.getCount(), newReservation.getStatus());
+            reservations.add(newReservation);
+        }
 
-        BookOrderInfo orderInfo = new BookOrderInfo(bookId, count);
-        BookOrderRequest request = new BookOrderRequest(List.of(orderInfo));
+        //create a bookOrderRequest obj to represent the entire order
+        BookOrderRequest request = new BookOrderRequest(Arrays.asList(bookOrderInfos));
 
         try {
+            //send the order request to the service and get the result
             BookOrderResult result = requestHandler.post(
                     request,
                     BookOrderResult.class,
                     ORDER_SERVICE_URL
             );
-            logger.info("successfully create payment for: bookId={}, count={}, orderStatus={}", bookId, count, result.status());
-            reservationEntryService.updateReservation(newReservation, ReservationStatus.COMMITTED);
+            logger.info("successfully create payment for order with such bookOrderInfos: {}", Arrays.toString(bookOrderInfos));
+
+            //update the reservations to assign that the order has been committed
+            for (Reservation newReservation: reservations) {
+                reservationEntryService.updateReservation(newReservation, ReservationStatus.COMMITTED);
+            }
             return result;
         } catch (ResponseErrorException e) {
-            reservationEntryService.updateReservation(newReservation, ReservationStatus.ERROR);
-            logger.error("exception during payment for: bookId={}, count={}, errorMessage={}", bookId, count, e.getMessage());
+            for (Reservation newReservation: reservations) {
+                reservationEntryService.updateReservation(newReservation, ReservationStatus.ERROR);
+            }
+            logger.error("exception during payment for order with bookOrderInfos: {}", Arrays.toString(bookOrderInfos), e);
             throw new PaymentFailedException("payment failed");
         }
     }
@@ -74,7 +86,9 @@ public class BookOrderServiceImpl implements BookOrderService {
     public BookOrderResult orderReserved(String reservationId) throws ReservationNotFoundException, BookNotFoundException, ReservationNotAvailableException {
         Reservation reservation = reserveBookRepository.findById(reservationId)
                 .orElseThrow(() -> new ReservationNotFoundException(reservationId));
+        List<BookOrderInfo> bookOrderInfos = new ArrayList<>();
 //        todo write call to payment service here
+        //not enough information, need to add a customer to finish this method
         reservationEntryService.updateReservation(reservation, ReservationStatus.COMMITTED);
         return null;
     }

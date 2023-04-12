@@ -1,23 +1,15 @@
 package org.example.controller;
 
-import org.example.controller.request.OrderBookRequest;
-import org.example.controller.response.BookOrderResponse;
-import org.example.controller.response.DefaultErrorMessage;
-import org.example.controller.response.DefaultHttpResponse;
-import org.example.exception.BookNotFoundException;
+import org.example.controller.request.BookOrderEntry;
 import org.example.exception.NoSuchCopiesAvailableException;
 import org.example.exception.PaymentFailedException;
 import org.example.exception.ReservationNotAvailableException;
-import org.example.exception.ReservationNotFoundException;
 import org.example.service.BookOrderService;
+import org.example.service.order.BookOrderInfo;
 import org.example.service.order.BookOrderResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/books")
@@ -30,9 +22,10 @@ public class BookOrderController {
     }
 
     @PutMapping("/order")
-    public ResponseEntity<BookOrderResult> orderBook(@RequestBody OrderBookRequest request) {
+    public ResponseEntity<BookOrderResult> orderBook(@RequestBody BookOrderEntry entry) {
         try {
-            BookOrderResult bookOrder = bookOrderService.order(request.getBookId(), request.getCount());
+            BookOrderInfo bookOrderInfo = new BookOrderInfo(entry.getBookId(), entry.getCount());
+            BookOrderResult bookOrder = bookOrderService.order(bookOrderInfo);
             return new ResponseEntity<>(bookOrder, HttpStatus.CREATED);
         } catch (ReservationNotAvailableException | NoSuchCopiesAvailableException e) {
 //            DefaultErrorMessage response = new DefaultErrorMessage(e.getMessage());

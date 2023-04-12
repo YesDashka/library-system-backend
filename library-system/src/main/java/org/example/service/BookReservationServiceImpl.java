@@ -10,6 +10,8 @@ import org.example.repository.ReserveBookRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+
 
 @Service
 public class BookReservationServiceImpl implements BookReservationService {
@@ -26,8 +28,8 @@ public class BookReservationServiceImpl implements BookReservationService {
     }
 
     @Override
-    public Reservation reserve(long bookId, int count) throws NoSuchCopiesAvailableException, BookNotFoundException {
-        return reservationEntryService.createNewReservation(bookId, count);
+    public Reservation reserve(Map<Long, Integer> bookCounts) throws NoSuchCopiesAvailableException, BookNotFoundException {
+        return reservationEntryService.createNewReservation(bookCounts);
     }
 
     @SneakyThrows(value = NoSuchCopiesAvailableException.class)
