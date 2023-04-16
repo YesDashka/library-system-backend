@@ -6,8 +6,8 @@ public class NoSuchCopiesAvailableException extends IOException {
 
 
 
-    public NoSuchCopiesAvailableException(String message) {
-        super(message);
+    public NoSuchCopiesAvailableException(int copies) {
+        super("No such copies available: missing %d books".formatted(Math.abs(copies)));
 
     }
 

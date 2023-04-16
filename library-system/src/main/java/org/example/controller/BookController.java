@@ -34,7 +34,7 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Book> getBookById(@PathVariable("id") long id) throws BookNotFoundException {
+    public ResponseEntity<Book> getBookById(@PathVariable("id") String id) throws BookNotFoundException {
         Book book = bookService.getBookById(id);
         return new ResponseEntity<>(book, HttpStatus.OK);
     }
@@ -47,7 +47,7 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteBookById(@PathVariable("id") long id) {
+    public ResponseEntity<HttpStatus> deleteBookById(@PathVariable("id") String id) {
         bookService.deleteBookById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }

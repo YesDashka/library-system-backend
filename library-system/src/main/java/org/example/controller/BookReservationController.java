@@ -4,6 +4,7 @@ import org.example.controller.response.CancelBookResponse;
 import org.example.controller.response.DefaultErrorMessage;
 import org.example.controller.response.DefaultHttpResponse;
 import org.example.controller.response.ReserveBookResponse;
+import org.example.dto.ReservationEntryDto;
 import org.example.entity.Reservation;
 import org.example.exception.BookNotAvailableException;
 import org.example.exception.BookNotFoundException;
@@ -14,11 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/books")
@@ -31,21 +30,20 @@ public class BookReservationController {
         this.reservationService = reservationService;
     }
 
-    @PutMapping("/{bookId}/reserve")
+    @PutMapping("/reserve")
     public ResponseEntity<DefaultHttpResponse> reserveBook(
-            @PathVariable("bookId") long id,
-            @RequestParam(value = "count", defaultValue = "1") int count
-    ) {
+            @RequestBody List<ReservationEntryDto> entries
+            ) {
         try {
-            Reservation reservation = reservationService.reserve(id, count);
-            ReserveBookResponse reserveBookResponse = new ReserveBookResponse(reservation.getId(), "Successfully reserved book by id %d".formatted(id));
+            Reservation reservation = reservationService.reserve(entries);
+            ReserveBookResponse reserveBookResponse = new ReserveBookResponse(reservation.getId(), "Successfully reserved books");
             return new ResponseEntity<>(reserveBookResponse, HttpStatus.OK);
         } catch (BookNotAvailableException | BookNotFoundException e) {
-            logger.warn("book not available or not found for: bookId={}, count={}, errorMessage={}", id, count, e.getMessage());
+//            logger.warn("book not available or not found for: bookId={}, count={}, errorMessage={}", id, count, e.getMessage());
             DefaultHttpResponse response = new DefaultErrorMessage(e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (NoSuchCopiesAvailableException e) {
-            logger.warn("out of copies for: bookId={}, count={}, errorMessage={}", id, count, e.getMessage());
+//            logger.warn("out of copies for: bookId={}, count={}, errorMessage={}", id, count, e.getMessage());
             DefaultErrorMessage response = new DefaultErrorMessage(e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }

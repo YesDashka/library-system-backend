@@ -3,10 +3,7 @@ package org.example.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "reservation")
@@ -19,14 +16,11 @@ public class Reservation {
     @Column(name = "id")
     private final String id;
 
-    @ElementCollection
-    @CollectionTable(name = "reservation_books_count", joinColumns = @JoinColumn(name = "reservation_id"))
-    @MapKeyColumn(name = "book_id")
-    @Column(name = "count")
-    private final Map<Long, Integer> booksCount;
+    @Column(name = "entries")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "reservation_id")
+    private final List<ReservationEntry> entries;
 
-//    @Column(name = "count")
-//    private final int count;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -40,36 +34,40 @@ public class Reservation {
 
     protected Reservation() {
         this.id = "";
-        this.booksCount = null;
+        this.entries = new ArrayList<>();
         this.status = null;
         this.startDate = null;
         this.endDate = null;
     }
 
-    private Reservation(String id, Map<Long, Integer> booksCount, ReservationStatus status, LocalDate startDate, LocalDate endDate) {
+    private Reservation(String id, List<ReservationEntry> entries, ReservationStatus status, LocalDate startDate, LocalDate endDate) {
         this.id = id;
-        this.booksCount = booksCount;
+        this.entries = entries;
         this.status = status;
         this.startDate = startDate;
         this.endDate = endDate;
     }
 
-    public static Reservation newReservation(Map<Long, Integer> booksCount) {
-        if(booksCount.isEmpty()) {
-            throw new RuntimeException("Invalid books count");
+    public static Reservation newReservation(List<ReservationEntry> entries) {
+        if(entries.isEmpty()) {
+            throw new RuntimeException("There are no book for reservation");
         }
-        int totalBookCount = booksCount.values().stream().mapToInt(Integer::intValue).sum();
+        
+        int totalBookCount = entries.stream()
+                .mapToInt(ReservationEntry::getCount)
+                .sum();
 
         if(totalBookCount > MAX_BOOKS_IN_ORDER) {
             throw new RuntimeException("The order contains too many books");
         }
 
-        String reservationId = UUID.randomUUID().toString();
+        // TODO: 15.04.23 custom class for Unique string identifier MLUID
+        String reservationId = IDGenerator.generateID();
         LocalDate now = LocalDate.now();
 
         return new Reservation(
                 reservationId,
-                booksCount,
+                entries,
                 ReservationStatus.NOT_RESERVED,
                 now,
                 now.plusDays(RESERVATION_DAYS_PERIOD)
@@ -105,15 +103,11 @@ public class Reservation {
     private static Reservation create(Reservation reservation, ReservationStatus reservationStatus) {
         return new Reservation(
                 reservation.id,
-                reservation.booksCount,
+                reservation.entries,
                 reservationStatus,
                 reservation.startDate,
                 reservation.endDate
         );
-    }
-
-    public Map<Long, Integer> getBooksCount() {
-        return booksCount;
     }
 
     private LocalDate getStartDate() {
@@ -132,11 +126,15 @@ public class Reservation {
         return status;
     }
 
+    public List<ReservationEntry> getEntries() {
+        return entries;
+    }
+
     @Override
     public String toString() {
         return "Reservation{" +
                 "id='" + id + '\'' +
-                ", booksCount=" + booksCount +
+                ", entries=" + entries +
                 ", status=" + status +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +

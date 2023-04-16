@@ -2,6 +2,7 @@ package org.example.dto;
 
 import lombok.Builder;
 import org.example.entity.Book;
+import org.example.entity.IDGenerator;
 
 import java.util.*;
 
@@ -89,8 +90,9 @@ public class BookDto {
     }
 
     public static Book convertToBook(BookDto bookDto){
-        return Book.builder().
-                title(bookDto.title)
+        return Book.builder()
+                .id(IDGenerator.generateID())
+                .title(bookDto.title)
                 .author(bookDto.author)
                 .description(bookDto.description)
                 .categories(bookDto.categories)

@@ -1,7 +1,9 @@
 package org.example.service;
 
 import lombok.SneakyThrows;
+import org.example.dto.ReservationEntryDto;
 import org.example.entity.Reservation;
+import org.example.entity.ReservationEntry;
 import org.example.entity.ReservationStatus;
 import org.example.exception.BookNotFoundException;
 import org.example.exception.NoSuchCopiesAvailableException;
@@ -10,7 +12,8 @@ import org.example.repository.ReserveBookRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Map;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -28,8 +31,12 @@ public class BookReservationServiceImpl implements BookReservationService {
     }
 
     @Override
-    public Reservation reserve(Map<Long, Integer> bookCounts) throws NoSuchCopiesAvailableException, BookNotFoundException {
-        return reservationEntryService.createNewReservation(bookCounts);
+    public Reservation reserve(List<ReservationEntryDto> entries) throws NoSuchCopiesAvailableException, BookNotFoundException {
+        List<ReservationEntry> reservationEntries = entries.stream()
+                .map(ReservationEntryDto::convertToReservationEntry)
+                .collect(Collectors.toList());
+
+        return reservationEntryService.createNewReservation(reservationEntries);
     }
 
     @SneakyThrows(value = NoSuchCopiesAvailableException.class)

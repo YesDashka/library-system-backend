@@ -24,7 +24,7 @@ public class BookServiceImpl implements BookService{
     }
 
     @Override
-    public Book updateBook(long bookId, Book book) {
+    public Book updateBook(String bookId, Book book) {
 //        Book updatedBook = bookRepository.findById(bookId).orElseThrow(() -> new RuntimeException());
 //        updatedBook.setAuthor(book.getAuthor());
 //        updatedBook.setCategories(book.getCategories());
@@ -36,13 +36,13 @@ public class BookServiceImpl implements BookService{
     }
 
     @Override
-    public void deleteBookById(long bookId) throws BookNotFoundException {
+    public void deleteBookById(String bookId) throws BookNotFoundException {
         Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookNotFoundException(bookId));
         bookRepository.delete(book);
     }
 
     @Override
-    public Book getBookById(long bookId) throws BookNotFoundException {
+    public Book getBookById(String bookId) throws BookNotFoundException {
         return bookRepository.findById(bookId).orElseThrow(() -> new BookNotFoundException(bookId));
     }
 

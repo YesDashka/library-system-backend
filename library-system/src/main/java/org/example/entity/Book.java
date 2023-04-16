@@ -20,9 +20,8 @@ public class Book {
     private static final String CATEGORIES_SEPARATOR = ",";
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private final long id;
+    private final String id;
 
     @Column(name = "title", nullable = false)
     private final String title;
@@ -50,7 +49,7 @@ public class Book {
     private final double price;
 
     public Book() {
-        this.id = 0;
+        this.id = null;
         this.title = null;
         this.author = null;
         this.description = null;
@@ -62,7 +61,7 @@ public class Book {
     }
 
     public Book(
-            long id,
+            String id,
             String title,
             String author,
             String description,
@@ -83,7 +82,7 @@ public class Book {
         this.price = price;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
@@ -120,10 +119,7 @@ public class Book {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Book book = (Book) o;
-        return id == book.id && copies == book.copies && copiesAvailable == book.copiesAvailable
-                && Double.compare(book.price, price) == 0 && Objects.equals(title, book.title)
-                && Objects.equals(author, book.author) && Objects.equals(description, book.description)
-                && Objects.equals(categories, book.categories) && Objects.equals(image, book.image);
+        return copies == book.copies && copiesAvailable == book.copiesAvailable && Double.compare(book.price, price) == 0 && Objects.equals(id, book.id) && Objects.equals(title, book.title) && Objects.equals(author, book.author) && Objects.equals(description, book.description) && Objects.equals(categories, book.categories) && Objects.equals(image, book.image);
     }
 
     @Override

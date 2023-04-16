@@ -14,11 +14,11 @@ public interface BookService {
 
     Book createBook(BookDto bookDto);
 
-    Book updateBook(long bookId, Book bookDetails);
+    Book updateBook(String bookId, Book bookDetails);
 
-    void deleteBookById(long bookId) throws BookNotFoundException;
+    void deleteBookById(String bookId) throws BookNotFoundException;
 
-    Book getBookById(long bookId) throws BookNotFoundException;
+    Book getBookById(String bookId) throws BookNotFoundException;
 
     List<Book> getAllBooks();
 

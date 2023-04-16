@@ -2,6 +2,7 @@ package org.example.service;
 
 import org.example.entity.Book;
 import org.example.entity.Reservation;
+import org.example.entity.ReservationEntry;
 import org.example.entity.ReservationStatus;
 import org.example.exception.BookNotFoundException;
 import org.example.exception.NoSuchCopiesAvailableException;
@@ -10,6 +11,7 @@ import org.example.repository.ReserveBookRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -27,52 +29,64 @@ class ReservationEntryService {
     }
 
     @Transactional
-    public Reservation createNewReservation(Map<Long, Integer> booksCount) throws BookNotFoundException, NoSuchCopiesAvailableException {
-        Reservation reservation = Reservation.newReservation(booksCount);
-        return updateReservation(reservation, ReservationStatus.RESERVED);
+    public Reservation createNewReservation(List<ReservationEntry> entries) throws BookNotFoundException, NoSuchCopiesAvailableException {
+        List<ReservationEntry> zipEntries = zipEntries(entries).entrySet()
+                .stream()
+                .map(entry -> ReservationEntry.newEntry(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
 
+        Reservation reservation = Reservation.newReservation(zipEntries);
+        return updateReservation(reservation, ReservationStatus.RESERVED);
     }
 
     @Transactional
     public Reservation updateReservation(Reservation reservation, ReservationStatus newStatus) throws NoSuchCopiesAvailableException, BookNotFoundException {
-        Map<Long, Integer> booksCount = reservation.getBooksCount();
-        Map<Long, Book> booksMap = bookRepository.findAllByIdIn(booksCount.keySet())
+        if (reservation.getStatus() == newStatus) {
+            return reservation;
+        }
+        if (reservation.getStatus().isMoreThan(newStatus)) {
+            throw new UnsupportedOperationException("Can't update reservation %s to previous %s stage.".formatted(reservation.getStatus(), newStatus));
+        }
+        Map<String, Integer> booksCount = zipEntries(reservation.getEntries());
+
+        Map<String, Book> booksMap = bookRepository.findAllByIdIn(booksCount.keySet())
                 .stream()
-                .collect(Collectors.toMap(
-                        Book::getId,
-                        Function.identity()
-                        )
-                );
-        for(Map.Entry<Long, Integer> entry: booksCount.entrySet()) {
-            long bookId = entry.getKey();
+                .collect(Collectors.toMap(Book::getId, Function.identity()));
+
+        for (Map.Entry<String, Integer> entry : booksCount.entrySet()) {
+            String bookId = entry.getKey();
             int count = entry.getValue();
             Book book = booksMap.get(bookId);
-            if(book == null) {
-                throw new BookNotFoundException(bookId);
-            }
-            final int copiesAvailable = book.getCopiesAvailable();
-            int reservationCopies = switch (reservation.getStatus()) {
-                case NOT_RESERVED -> -count;
-                case EXPIRED, CANCELLED -> count;
-                default -> 0;
-            };
-            int copies = copiesAvailable + reservationCopies;
-            if (copies < 0) {
-                throw new NoSuchCopiesAvailableException("No such copies available: missing %d books"
-                        .formatted(Math.abs(copies)));
-            }
+            int copies = evaluateCopies(newStatus, count, book);
             bookRepository.updateCopiesAvailable(book.getId(), copies);
         }
-//        if (reservation.getStatus() == newStatus) {
-//            return reservation;
-//        }
-//        if (reservation.getStatus().isMoreThan(newStatus)) {
-//            throw new UnsupportedOperationException("Can't update reservation %s to previous %s stage.".formatted(reservation.getStatus(), newStatus));
-//        }
-
         Reservation newReservation = Reservation.factory(reservation, newStatus);
         reserveBookRepository.save(newReservation);
         return newReservation;
+    }
+
+    private static int evaluateCopies(ReservationStatus newStatus, int count, Book book) throws NoSuchCopiesAvailableException {
+        final int copiesAvailable = book.getCopiesAvailable();
+        int reservationCopies = switch (newStatus) {
+            case RESERVED -> -count;
+            case EXPIRED, CANCELLED, ERROR -> count;
+            case NOT_RESERVED, COMMITTED -> 0;
+        };
+        int copies = copiesAvailable + reservationCopies;
+        if (copies < 0) {
+            throw new NoSuchCopiesAvailableException(copies);
+        }
+        return copies;
+    }
+
+    //group by bookId and find general count of certain book
+    private static Map<String, Integer> zipEntries(List<ReservationEntry> entries) {
+        return entries
+                .stream()
+                .collect(Collectors.groupingBy(
+                        ReservationEntry::getBookId,
+                        Collectors.summingInt(ReservationEntry::getCount))
+                );
     }
 
 }
